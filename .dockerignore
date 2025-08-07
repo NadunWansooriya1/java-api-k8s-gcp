@@ -1,0 +1,9 @@
+target/
+*.iml
+.idea/
+.DS_Store
+*.log
+.git/
+README.md
+Dockerfile
+.dockerignore

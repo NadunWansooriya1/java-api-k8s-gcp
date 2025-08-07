@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: java-api-config
+  namespace: java-api-ns-nadun
+data:
+  application.properties: |
+    server.port=8080
+    management.endpoints.web.exposure.include=health,info,metrics,prometheus
+    management.endpoint.prometheus.enabled=true  
+    logging.level.com.example=INFO

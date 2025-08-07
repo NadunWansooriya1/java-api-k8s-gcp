@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: java-api-ns-nadun
+  labels:
+    name: java-api-ns-nadun
+    environment: production
