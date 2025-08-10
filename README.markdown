@@ -1,4 +1,4 @@
-# Java API on Google Kubernetes Engine
+
 
 ## Overview
 This project deploys a Java Spring Boot API on Google Kubernetes Engine (GKE) with an NGINX Ingress for external access and TLS encryption. The API provides two endpoints:
@@ -71,8 +71,11 @@ java-api/
    Invoke-RestMethod -Uri http://localhost:8080/health
    Invoke-RestMethod -Uri http://localhost:8080/api/users
    ```
+<img width="1477" height="832" alt="image" src="https://github.com/user-attachments/assets/b07753e4-61de-4b56-b40c-ab2d73dc170a" />
 
 ### 3. Push to Google Artifact Registry
+<img width="1528" height="662" alt="image" src="https://github.com/user-attachments/assets/190b0741-c179-4b53-b8a9-d9164951f342" />
+
 1. Set environment variables:
    ```powershell
    $env:PROJECT_ID = "betbazar-ops"
@@ -105,6 +108,8 @@ java-api/
    ```powershell
    gcloud container clusters get-credentials java-api-cluster-nadun --zone us-central1-a --project $env:PROJECT_ID
    ```
+   <img width="1613" height="817" alt="image" src="https://github.com/user-attachments/assets/867c66c1-9d39-4129-b506-95d576f69f4f" />
+
 2. Set the namespace environment variable:
    ```powershell
    $env:NAMESPACE = "java-api-ns-nadun"
@@ -127,6 +132,8 @@ java-api/
    ```
 
 ### 5. Configure Ingress
+<img width="1547" height="660" alt="image" src="https://github.com/user-attachments/assets/1a632a43-bd22-486f-8667-ca401a75ca61" />
+
 1. Install NGINX Ingress Controller:
    ```powershell
    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
@@ -148,7 +155,10 @@ java-api/
    ```powershell
    kubectl get svc -n ingress-nginx
    ```
+<img width="1617" height="842" alt="image" src="https://github.com/user-attachments/assets/2b8a0a3e-12e4-42f1-9059-0c2effb18551" />
+
 6. Update DNS to point `api.nadunwansooriya.online` to the Ingress controller’s `EXTERNAL-IP` (A record).
+<img width="1593" height="840" alt="image" src="https://github.com/user-attachments/assets/921a3f98-e27d-425b-9639-b552b8d2d6a9" />
 
 ### 6. Testing
 1. Verify resources:
@@ -167,6 +177,7 @@ java-api/
    Invoke-RestMethod -Uri https://api.nadunwansooriya.online/health
    Invoke-RestMethod -Uri https://api.nadunwansooriya.online/api/users
    ```
+<img width="1017" height="523" alt="image" src="https://github.com/user-attachments/assets/7268ec4d-75e3-41b1-88a4-45d7a9ed5a2a" />
 
 ### 7. Monitoring
 1. Enable Prometheus metrics in the ConfigMap (`k8s/02-configmap.yaml`):
@@ -180,50 +191,17 @@ java-api/
    kubectl rollout restart deployment java-api-deployment -n $env:NAMESPACE
    ```
 2. Access Grafana (if set up in `monitoring-nadun` namespace):
+   <img width="1668" height="902" alt="image" src="https://github.com/user-attachments/assets/0f75fd63-b0f5-4f09-ba5a-4d32af4c95b4" />
+
    ```powershell
    kubectl get pods -n monitoring-nadun -l app.kubernetes.io/name=grafana
    kubectl port-forward svc/prometheus-grafana 3000:80 -n monitoring-nadun
    ```
    Open `http://localhost:3000` (default credentials: `admin`/`prom-operator`).
 
-3. Run the monitoring script:
+4. Run the monitoring script:
    ```powershell
    .\scripts\monitor.sh
    ```
+   <img width="970" height="617" alt="image" src="https://github.com/user-attachments/assets/f8a2b4ab-a801-4eb7-98c7-165883d38d17" />
 
-### 8. Cleanup
-To delete all resources:
-```powershell
-.\scripts\cleanup.sh
-```
-
-## Endpoints
-- **Health Check**: `https://api.nadunwansooriya.online/health`
-  - Response: `{"status":"UP","timestamp":"..."}`
-- **Users**: `https://api.nadunwansooriya.online/api/users`
-  - Response: `[{"id":1,"name":"John Doe","email":"john@example.com"},{"id":2,"name":"Jane Smith","email":"jane@example.com"}]`
-
-## Troubleshooting
-- **ImagePullBackOff**: Verify the image in Artifact Registry:
-  ```powershell
-  gcloud artifacts docker images list "$env:REGION-docker.pkg.dev/$env:PROJECT_ID/$env:REPOSITORY_NAME"
-  ```
-- **Pod Crashes**: Check logs:
-  ```powershell
-  kubectl logs -f deployment/java-api-deployment -n $env:NAMESPACE
-  ```
-- **Ingress Issues**: Check Ingress and controller:
-  ```powershell
-  kubectl describe ingress java-api-ingress -n $env:NAMESPACE
-  kubectl logs -f deployment/ingress-nginx-controller -n ingress-nginx
-  ```
-- **TLS Issues**: Verify certificate:
-  ```powershell
-  kubectl describe certificate java-api-tls -n $env:NAMESPACE
-  ```
-
-## Notes
-- **Security**: The deployment runs as a non-root user with a read-only filesystem.
-- **Scaling**: The HPA scales based on 70% CPU and 80% memory utilization.
-- **TLS**: Uses Let's Encrypt via cert-manager for secure HTTPS access.
-- **Costs**: Monitor GKE and LoadBalancer usage in the GCP Console to manage costs.
