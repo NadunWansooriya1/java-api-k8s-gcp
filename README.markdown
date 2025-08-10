@@ -1,4 +1,4 @@
-<img width="1586" height="696" alt="image" src="https://github.com/user-attachments/assets/6792622f-3713-4103-bd8b-e5ee2156108e" />
+
 
 ## Overview
 This project deploys a Java Spring Boot API on Google Kubernetes Engine (GKE) with an NGINX Ingress for external access and TLS encryption. The API provides two endpoints:
@@ -147,6 +147,7 @@ java-api/
    kubectl apply -f k8s/letsencrypt-prod.yaml
    kubectl apply -f k8s/07-certificate.yaml
    ```
+   
    <img width="1586" height="696" alt="image" src="https://github.com/user-attachments/assets/09c9da7f-d2b5-45d1-96b2-2e1b2b0f23dc" />
 
 4. Apply the Ingress:
